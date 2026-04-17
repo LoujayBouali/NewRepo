@@ -1,6 +1,3 @@
-
-FROM python:3.10-slim
-WORKDIR /app
-COPY . .
-RUN pip install Pillow
-CMD ["python", "watermarkqim.py"]
+FROM ubuntu:latest
+ADD watermarkqim.py /app/watermarkqim.py
+CMD ["python3", "/app/watermarkqim.py"]
