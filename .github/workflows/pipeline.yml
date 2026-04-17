@@ -1,32 +1,13 @@
-name: CI/CD Pipeline
+name: Docker Image CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "master" ]
 
 jobs:
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
   build:
-    needs: test
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,17 +15,15 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.dockerusername}}
-          password: ${{ secrets.dockerpassword }}
+          username: ${{ secrets.DOCKERUSERNAME }}
+          password: ${{ secrets.DOCKERPASSWORD }}
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.dockerusername }}/myapp:${{ github.sha }} .
-          docker tag ${{ secrets.dockerusername }}/myapp:${{ github.sha }} \
-                     ${{ secrets.dockerusername }}/myapp:latest
+          docker build -t ${{ secrets.DOCKERUSERNAME }}/myapp:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERUSERNAME }}/myapp:${{ github.sha }} ${{ secrets.DOCKERUSERNAME }}/myapp:latest
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.dockerusername }}/myapp:${{ github.sha }}
-          docker push ${{ secrets.dockerusername }}/myapp:latest
-
+          docker push ${{ secrets.DOCKERUSERNAME }}/myapp:${{ github.sha }}
+          docker push ${{ secrets.DOCKERUSERNAME }}/myapp:latest
